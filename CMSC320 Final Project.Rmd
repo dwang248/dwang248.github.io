@@ -8,7 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-``` {r Oh this is stuff}
+```{r start}
 library(tidyverse)
 library(rvest)
 library(dplyr)
@@ -16,13 +16,74 @@ library(tidyr)
 library(stringr)
 library(crypto)
 
-cc <- "https://coinmarketcap.com/currencies/bitcoin/historical-data/?start=20130428&end=20190519"
+cc <- crypto_history(coin = "bitcoin", limit = NULL, start_date = "20170427", end_date ="20190228")
 
-crypto_history(coin = "bitcoin", limit = NULL, start_date = "20170427", end_date ="20190228")
+colnames(cc)[colnames(cc)=="date"] <- "Date"
+cc
 ```
 
-```{r excel}
+```{r excel_data}
 library(readxl)
 
 CMSC320_Crypto_Data <- read_excel("CMSC320 Crypto Data.xlsx")
+df <- data.frame(CMSC320_Crypto_Data)
+df
+
 ```
+
+
+```{r DJW}
+# Gets stock data from yahoo
+# install.packages("quantmod")
+
+library(tidyverse)
+library(rvest)
+library(quantmod)
+
+# Scrape Data from yahoo finance
+getSymbols("^DJI", from = "2017-4-27", to = "2019-2-28")
+
+# Set it as a data frame
+DJI_data <- data.frame(DJI) 
+DJI_data
+
+# Date is set as a row name. We need to change this so that Date becomes an attribute. This will be neccessary if we want to merge the stock data with the bitcoin data
+
+# Add a column name to the dates as well as change the names for the rest of the attributes
+DJI_data <- cbind(rownames(DJI_data), DJI_data)
+# Removes the row name
+rownames(DJI_data) <- NULL
+colnames(DJI_data) <- c("Date","DJW_Open","DJI_High", "DJI_Low", "DJI_Close", "DJI_Volume", "DJI_Adjusted")
+
+DJI_data
+```
+
+
+```{r NVDA}
+# Repeat for NVIDIA stock
+getSymbols("NVDA", from = "2017-4-27", to = "2019-2-28")
+
+NVDA_data <- data.frame(NVDA) 
+NVDA_data
+
+NVDA_data <- cbind(rownames(NVDA_data), NVDA_data)
+
+rownames(NVDA_data) <- NULL
+colnames(NVDA_data) <- c("Date","NVDA_Open","NVDA_High", "NVDA_Low", "NVDA_Close", "NVDA_Volume", "NVDA_Adjusted")
+
+NVDA_data
+```
+
+
+
+```{r merge}
+Merge <- cc %>%
+  left_join(df, by = "Date")
+```
+
+
+
+
+
+
+
