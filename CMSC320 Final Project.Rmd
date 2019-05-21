@@ -21,3 +21,8 @@ cc <- "https://coinmarketcap.com/currencies/bitcoin/historical-data/?start=20130
 crypto_history(coin = "bitcoin", limit = NULL, start_date = "20170427", end_date ="20190228")
 ```
 
+```{r excel}
+library(readxl)
+
+CMSC320_Crypto_Data <- read_excel("CMSC320 Crypto Data.xlsx")
+```
