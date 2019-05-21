@@ -9,6 +9,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ``` {r Oh this is stuff}
+library(tidyverse)
+library(rvest)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(crypto)
 
+cc <- "https://coinmarketcap.com/currencies/bitcoin/historical-data/?start=20130428&end=20190519"
+
+crypto_history(coin = "bitcoin", limit = NULL, start_date = "20170427", end_date ="20190228")
 ```
 
