@@ -19,6 +19,7 @@ library(crypto)
 cc <- crypto_history(coin = "bitcoin", limit = NULL, start_date = "20170427", end_date ="20190228")
 
 colnames(cc)[colnames(cc)=="date"] <- "Date"
+ 
 cc
 ```
 
@@ -26,7 +27,7 @@ cc
 library(readxl)
 
 CMSC320_Crypto_Data <- read_excel("CMSC320 Crypto Data.xlsx")
-df <- data.frame(CMSC320_Crypto_Data)
+df <- data.frame(CMSC320_Crypto_Data) 
 df
 
 ```
@@ -55,7 +56,13 @@ DJI_data <- cbind(rownames(DJI_data), DJI_data)
 rownames(DJI_data) <- NULL
 colnames(DJI_data) <- c("Date","DJW_Open","DJI_High", "DJI_Low", "DJI_Close", "DJI_Volume", "DJI_Adjusted")
 
-DJI_data
+DJI_data 
+```
+
+```{r merge_data}
+temp <- cc %>%
+  left_join(df, by = "Date") 
+temp
 ```
 
 
@@ -71,14 +78,21 @@ NVDA_data <- cbind(rownames(NVDA_data), NVDA_data)
 rownames(NVDA_data) <- NULL
 colnames(NVDA_data) <- c("Date","NVDA_Open","NVDA_High", "NVDA_Low", "NVDA_Close", "NVDA_Volume", "NVDA_Adjusted")
 
-NVDA_data
 ```
 
 
+```{r merge_stocks}
+stock_data <- NVDA_data %>%
+  left_join(DJI_data, by="Date") %>%
+  mutate(Date = as.Date(Date, format="%Y-%m-%d"))
+stock_data
+```
 
-```{r merge}
-Merge <- cc %>%
-  left_join(df, by = "Date")
+
+```{r merge_stock}
+cryp <- temp %>%
+  left_join(stock_data, by="Date")
+cryp
 ```
 
 
