@@ -8,3 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+``` {r Oh this is stuff}
+
+```
+
