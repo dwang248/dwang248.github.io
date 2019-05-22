@@ -304,21 +304,6 @@ To determine whether or not we can reject the null hypothesis. We will be using 
 Looking at the regression, we can see that the variables log(volume), log(spread), log(AvgFee), log(Hashrate), log(Diff), ResElec, FFR, log(trending), Infl, and log(NVDA) all have p-values that are less than 0.05. This means that these variables are statistically significance suggesting that they are variables that influence the price of Bitcoin. It can also be seen that the p-values for log(TxPerDay), CommElec, and log(DJI_Adjusted) are all greater than 0.05 meaning that we fail to reject the null hypothesis. This mean that log(TxPerDay), CommElec, and log(DJI_Adjusted) do no have a significant effect on the value of Bitcoin.
 
 
-## Regression Analysis
-
-```{r fitted}
-check <- broom::augment(price_fit) 
-check %>%
-  ggplot(aes(x=.fitted, y=.resid)) +
-    geom_point() +
-    geom_smooth() +
-    labs(title="Fitted vs. Residuals",
-         x = "fitted",
-         y = "residuals")
-```
-
-We need to ensure that our regression is a good approximation. To determine this, we will create a plot that will show the relationship between fitted and residuals. 
-
 ## Random Forest
 
 ```{r forest}
