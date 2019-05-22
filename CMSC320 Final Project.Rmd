@@ -297,14 +297,16 @@ On average, holding everything else constant, a one percent increase in DJI stoc
 
 ## Hypothesis Testing
 
-We will now perform hypothesis testing on our independent variables. This is to help determine whether or not our variables are statistically significant. In other words, did our variables have a substantial effect on the value of Bitcoin. In this case, the null hypothesis is that a variable has no effect on the value of Bitcoin. The alternative hypothesis is that the variable does have an effect on the value of Bitcoin. In order to determine whether or not we should reject or fail to reject the null hypothesis, we will use the probability model given by the Central Limit Theroem. We will use a 95% rejection threshold in this determination. For example, for any estimate $\hat{p}$, if $P(Y\geq\hat{p})\geq .95$ we would reject the null hypothesis of no effect and accept the alternative hypothesis that there is an effect. 
+We will now perform hypothesis testing on our independent variables. This is to help determine whether or not our variables are statistically significant. In other words, did our variables have a substantial effect on the value of Bitcoin? In this case, the null hypothesis is that a variable has no effect on the value of Bitcoin. The alternative hypothesis is that the variable does have an effect on the value of Bitcoin. In order to determine whether or not we should reject or fail to reject the null hypothesis, we will use the probability model given by the Central Limit Theorem. We will use a 95% rejection threshold in this determination. For example, for an estimate $\hat{p}$, if $P(Y\geq\hat{p})\geq .95$ we would reject the null hypothesis of no effect and accept the alternative hypothesis that there is an effect. 
 
 To determine whether or not we can reject the null hypothesis. We will be using the p-value of each estimate. If the p-value is greater than 0.05, we would fail to reject the null hypothesis. If the p-value is less than 0.05, we would reject the null hypothesis suggesting that the variable has significance. 
 
-Looking at the regression, we can see that the variables log(volume), log(spread), log(AvgFee), log(Hashrate), log(Diff), ResElec, FFR, log(trending), Infl, and log(NVDA) all have p-values that are less than 0.05. This means that these variables are statistically significance suggesting that they are variables that influence the price of Bitcoin. It can also be seen that the p-values for log(TxPerDay), CommElec, and log(DJI_Adjusted) are all greater than 0.05 meaning that we fail to reject the null hypothesis. This mean that log(TxPerDay), CommElec, and log(DJI_Adjusted) do no have a significant effect on the value of Bitcoin.
+Looking at the regression, we can see that the variables log(volume), log(spread), log(AvgFee), log(Hashrate), log(Diff), ResElec, FFR, log(trending), Infl, and log(NVDA) all have p-values that are less than 0.05. This means that these variables are statistically significance suggesting that they are variables that influence the price of Bitcoin. It can also be seen that the p-values for log(TxPerDay), CommElec, and log(DJI_Adjusted) are all greater than 0.05 meaning that we fail to reject the null hypothesis. This means that log(TxPerDay), CommElec, and log(DJI_Adjusted) do not have a significant effect on the value of Bitcoin.
 
 
 ## Random Forest
+
+There are several limitations in using linear methods for classification. 
 
 ```{r forest}
 set.seed(1234)
@@ -325,9 +327,12 @@ variable_importance <- importance(cryp_rf)
 knitr::kable((round(variable_importance, digits=2)))
 ```
 
+
+
 ```{r plot}
 barplot(t(variable_importance/sum(variable_importance)))
 ```
+
 
 ## Leaflet Visualization
 ```{r Local Volume Data}
