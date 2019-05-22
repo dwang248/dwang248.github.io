@@ -142,12 +142,17 @@ stock_data <- NVDA_data %>%
 stock_data
 ```
 
+We will now merge the the DJI stock data set with the NVDA stock data set using the 'left_join' function with the common attribute "Date". The two data sets will be merged into one data set that we will call stock_data.
+
+Notice that the data type for Date in stock_data is not the same as the data type for Date in crypto_merge. We need to change the data type of "Date"" in stock_data in order to properly merge stock_data and crypto_merge together. We will use the 'as.Date' function to change the "Date" data type from a <fctr> data type to a <date> data type
 
 ```{r merge_stock}
 crypto_data <- cryto_merge %>%
   left_join(stock_data, by="Date")
 crypto_data
 ```
+
+We will now merge the data set crypto_data with the data set stock_data using the 'left_join' function using the common attribute "Date". This will merge all the data that we ingested into one data set. We will call this crypto_data.
 
 ## Missing Data: Imputation
 A common approach is to add an additional indicator variable stating if numeric missing value was imputed
