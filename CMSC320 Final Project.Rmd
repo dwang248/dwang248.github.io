@@ -58,12 +58,14 @@ Notice that the type for the attribute Date is different than the one in the fir
 Once the Date attribute has been converted into type date, we now have a data set that can be merged with our previous dataset.
 
 ```{r merge_data}
-cryto_merge <- crypto_hist %>%
+crypto_merge <- crypto_hist %>%
   left_join(excel_data, by = "Date") 
-cryto_merge
+crypto_merge
 ```
 
-We will now merge the two datasets together using their Date attribute. To do this, we will be using the 'join' operation. The 'join' operation allows us to merge the rows of two data sets forming one data set, given a matching attribute from the two data sets. The join operation that we will be mainly using is the 'left_join' operation. 'left_join' will merge the two data sets together; however, all observations on the left hand side or the first data set are retained.   
+We will now merge the two datasets together using their Date attribute. To do this, we will be using the 'join' operation. The 'join' operation allows us to merge the rows of two data sets forming one data set, given a matching attribute from the two data sets. The join operation that we will be mainly using is the 'left_join' operation. 'left_join' will merge the two data sets together; however, all observations on the left hand side or the first data set are retained.
+
+We will merge the data set excel_data onto the data set crypto_hist using the common attribute "Date" with the function 'left_join'. This will create one data set that contains the data from both data sets. We will call this new data set, crypto_merge. 
 
 ```{r DJW}
 # Gets stock data from yahoo
