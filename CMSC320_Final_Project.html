@@ -570,7 +570,7 @@ price_fit %&gt;%
 </tbody>
 </table>
 <p>We will now perform a logarithmic regression based on the dependent and indenpendet variables that we have chosen. We will use the function ‘lm’ to do this. ‘lm’ is used to fit linear models and to perform regressions. The ‘lm’ function requires a formula in which we will input the regression we described using the data from crypto_data. We will set it to price_fit.</p>
-<p>To view the results, we require the function ‘tidy’ from the broom package. This function will allow us to view the estimates for each of the independent variables of our regression. We will also use the function ‘kable’ to limit the number of decimals we view as we only do not require such a precise number in order to make our interpretations.</p>
+<p>To view the results, we require the function ‘tidy’ from the broom package. This function will allow us to view the estimates for each of the independent variables of our regression. We will also use the function ‘kable’ to limit the number of decimals we view as we only do not require such a precise number in order to make our interpretations. These results will allow us to perform interpretations on the relationship between the value of Bitcoin and the independent variables as well as determine whether or not those variables have a significant effect on the value of Bitcoin.</p>
 </div>
 <div id="interpretation" class="section level2">
 <h2>Interpretation</h2>
@@ -591,6 +591,12 @@ price_fit %&gt;%
 <p>On average, holding everything else constant, a one unit increase in trending will decrease the price of Bitcoin by .1244%.</p>
 <p>On average, holding everything else constant, a one percent increase in NVDA stock will increase the price of Bitcoin by .3548%.</p>
 <p>On average, holding everything else constant, a one percent increase in DJI stock will decrease the price of Bitcoin by .3693%.</p>
+</div>
+<div id="hypothesis-testing" class="section level2">
+<h2>Hypothesis Testing</h2>
+<p>We will now perform hypothesis testing on our independent variables. This is to help determine whether or not our variables are statistically significant. In other words, did our variables have a substantial effect on the value of Bitcoin. In this case, the null hypothesis is that a variable has no effect on the value of Bitcoin. The alternative hypothesis is that the variable does have an effect on the value of Bitcoin. In order to determine whether or not we should reject or fail to reject the null hypothesis, we will use the probability model given by the Central Limit Theroem. We will use a 95% rejection threshold in this determination. For example, for any estimate <span class="math inline">\(\hat{p}\)</span>. if <span class="math inline">\(P(Y\geq\hat{p})\geq .95\)</span> we would reject the null hypothesis of no effect and accept the alternative hypothesis that there is an effect.</p>
+<p>To determine whether or not we can reject the null hypothesis. We will be using the p-value of each estimate. If the p-value is greater than 0.05, we would fail to reject the null hypothesis. If the p-value is less than 0.05, we would reject the null hypothesis suggesting that the variable has significance.</p>
+<p>Looking at the regression, we can see that the variables log(volume), log(spread), log(AvgFee), log(Hashrate), log(Diff), ResElec, FFR, log(trending), Infl, and log(NVDA) all have p-values that are less than 0.05. This means that these variables are statistically significance suggesting that they are variables that influence the price of Bitcoin. It can also be seen that the p-values for log(TxPerDay), CommElec, and log(DJI_Adjusted) are all greater than 0.05 meaning that we fail to reject the null hypothesis. This mean that log(TxPerDay), CommElec, and log(DJI_Adjusted) do no have a significant effect on the value of Bitcoin.</p>
 </div>
 <div id="regression-analysis" class="section level2">
 <h2>Regression Analysis</h2>
