@@ -147,7 +147,7 @@ We will now merge the the DJI stock data set with the NVDA stock data set using 
 Notice that the data type for Date in stock_data is not the same as the data type for Date in crypto_merge. We need to change the data type of "Date"" in stock_data in order to properly merge stock_data and crypto_merge together. We will use the 'as.Date' function to change the "Date" data type from a <fctr> data type to a <date> data type
 
 ```{r merge_stock}
-crypto_data <- cryto_merge %>%
+crypto_data <- crypto_merge %>%
   left_join(stock_data, by="Date")
 crypto_data
 ```
@@ -197,6 +197,8 @@ We have now filled in the missing data for our stock variables. Now the next ste
 
 ## Regression
 
+We will analyze our data using regressions. Regressions are useful tools to interpret and analyze data. It helps us determine whether certain variables have a relationship with one another. 
+
 ```{r plot}
 crypto_data %>%
   ggplot(aes(x=Date, y=close)) +
@@ -216,7 +218,7 @@ From the data set, crypto_data, we selected various variables as we believe that
 
 Volume: Indicates the amount of money people are putting into the Bitcoin system. The larger the volume the more confident people are with the Bitcoin, which would increase its value.
 
-Spread: Indicates how speculation could have an effect on the value of Bitcoin.
+Spread: Indicates how speculation could have an effect on the value of Bitcoin. This will be logged.
 
 TxPerDay: The more transactions individuals are making through Bitcoin, the more accepting people are with Bitcoin, which would increase its value. This will be logged.
 
@@ -238,20 +240,38 @@ DJI_Adjusted: Instrument for general health of the US economy. This will be logg
 
 NVDA_Adjusted: Chosen as an instrument for interest in Bitcoin mining. This will be logged.
 
-
+Based on these independent variables, the regression we will be performing is:
+$log(close) = \beta_0 + \beta_1log(volume) +  \beta_2log(spread) + \beta_3log(TxPerDay) + \beta_4log(Hashrate) + \beta_5log(Diff) + \beta_6ResElec + \beta_7CommElec + \beta_8FFR + \beta_8log(Trending) + \beta_9Infl + \beta_{10}log(NVDAAdjusted) + \beta_{11}log(DJIAdjusted)$ 
 
 ```{r regression}
-price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = crypto_data)
+library(broom)
+price_fit <- lm(log(close) ~ log(volume) + log(spread) + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = crypto_data)
 
-broom::tidy(price)
+price_fit %>% 
+  broom::tidy() %>%
+  knitr::kable(digits=4)
 ```
 
-We will now perform a logarithmic regression based on the dependent and indenpendet variables that we have chosen. We will use the function  
+We will now perform a logarithmic regression based on the dependent and indenpendet variables that we have chosen. We will use the function 'lm' to do this. 'lm' is used to fit linear models and to perform regressions. The 'lm' function requires a formula in which we will input the regression we described using the data from crypto_data. We will set it to price_fit.
 
-On average, holding everything else constant, a one percent increase in volume will increase the price of Bitcoin by 0.392696910479%.
+To view the results, we require the function 'tidy' from the broom package. This function will allow use to view the estimates for each of the independent variables as well as the constant of our regression. 
 
-On average, 
 
+## Interpretation
+
+On average, holding everything else constant, a one percent increase in volume will increase the price of Bitcoin by .4609%.
+
+On average, holding everything else constant, a one percent increase in spread will decrease the price of Bitcoin by .052%.
+
+On average, holding everything else constant, a one percent increase in transactions per day will increase the price of Bitcoin by .0143%.
+
+On average, holding everything else constant, a one percent increase in average fee will increase the price of Bitcoin by .0833%.
+
+On average, holding everything else constant, a one percent increase in hashrate will increase the price of Bitcoin by .1691%.
+
+On average, holding everything else constant, a one cent increase in residential electricity will increase the price of Bitcoin by .3484%.
+
+On average, holding everything else constant, a one percent increase in difficulty will increase the price of Bitcoin by .3484%.
 
 ## Regression Analysis
 
