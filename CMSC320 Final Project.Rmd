@@ -1,7 +1,9 @@
 ---
 title: "CMSC320 Final Project"
-author: David Wang, Steve Jettoo
-output: pdf_document
+author: "David Wang, Steve Jettoo"
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -199,7 +201,7 @@ We have now filled in the missing data for our stock variables. Now the next ste
 
 We will analyze our data using regressions. Regressions are useful tools to interpret and analyze data. It helps us determine whether certain variables have a relationship with one another. 
 
-```{r plot}
+```{r reg_plot}
 crypto_data %>%
   ggplot(aes(x=Date, y=close)) +
     geom_point() +
@@ -254,10 +256,20 @@ price_fit %>%
 
 We will now perform a logarithmic regression based on the dependent and indenpendet variables that we have chosen. We will use the function 'lm' to do this. 'lm' is used to fit linear models and to perform regressions. The 'lm' function requires a formula in which we will input the regression we described using the data from crypto_data. We will set it to price_fit.
 
-To view the results, we require the function 'tidy' from the broom package. This function will allow use to view the estimates for each of the independent variables as well as the constant of our regression. 
+To view the results, we require the function 'tidy' from the broom package. This function will allow us to view the estimates for each of the independent variables of our regression. We will also use the function 'kable' to limit the number of decimals we view as we only do not require such a precise number in order to make our interpretations. These results will allow us to perform interpretations on the relationship between the value of Bitcoin and the independent variables as well as determine whether or not those variables have a significant effect on the value of Bitcoin.
 
 
 ## Interpretation
+
+Depending on the model, there are different ways to interpret the results. Here are a few ways a model could be interpreted:
+
+Model 1: $y = \beta_0 + \beta_1x$ Interpretation: If you change x by one, we'd expect y to change by $\beta_1 \\$
+
+Model 2: $log(y) = \beta_0 + \beta_1x$ Interpretation: If we change x by 1 (unit), we'd expect our y variable to change by $\beta_1 * 100\\$ percent. 
+
+Model 3: $y = \beta_0 + \beta_1log(x)$ Interpretation: If we increase x by one percent, we expect y to increase by $\beta_1/100$ units of y. 
+
+Model 4: $log(y) = \beta_0 + \beta_1log(x)$ Interpretation: If we increase x by one percent, we expect y to increase by $\beta_1$ percent. 
 
 On average, holding everything else constant, a one percent increase in volume will increase the price of Bitcoin by .4609%.
 
@@ -269,14 +281,24 @@ On average, holding everything else constant, a one percent increase in average 
 
 On average, holding everything else constant, a one percent increase in hashrate will increase the price of Bitcoin by .1691%.
 
-On average, holding everything else constant, a one cent increase in residential electricity will increase the price of Bitcoin by .3484%.
-
 On average, holding everything else constant, a one percent increase in difficulty will increase the price of Bitcoin by .3484%.
+
+On average, holding everything else constant, a one cent increase in the price of residential electricity will decrease the price of Bitcoin by 29.09%.
+
+On average, holding everything else constant, a one cent increase in the price of commerical electricity will increase the price of Bitcoin by 5.47%.
+
+On average, holding everything else constant, a one unit increase in the federal funds rate will decrease the price of Bitcoin by 92.78%.
+
+On average, holding everything else constant, a one unit increase in trending will decrease the price of Bitcoin by .1244%.
+
+On average, holding everything else constant, a one percent increase in NVDA stock will increase the price of Bitcoin by .3548%.
+
+On average, holding everything else constant, a one percent increase in DJI stock will decrease the price of Bitcoin by .3693%.
 
 ## Regression Analysis
 
 ```{r fitted}
-check <- broom::augment(price) 
+check <- broom::augment(price_fit) 
 check %>%
   ggplot(aes(x=.fitted, y=.resid)) +
     geom_point() +
