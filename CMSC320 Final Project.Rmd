@@ -170,7 +170,6 @@ In regards to missing data,it is important to know why the data was missing in o
 
 But before that, let us first add an additional indicator variable stating if the stock data is missing or not. We will use the function 'is.na' to determine whether or not the stock is missing or not. We will also use the 'mutate' function to create the new indicator variable. Given that both NVDA and DJI will have missing values on the same day, we will only need one indicator variable to state if the value is missing or not. 
 
-In the case of numeric values, we can use a simple method for imputation where we replace missing values for a variable with, for instance, the mean of non-missing values
 
 ```{r missing}
 crypto_data$NVDA_Open[is.na(crypto_data$NVDA_Open)] <- mean(crypto_data$NVDA_Open, na.rm=TRUE)
@@ -190,10 +189,10 @@ crypto_data$DJI_Adjusted[is.na(crypto_data$DJI_Adjusted)] <- mean(crypto_data$DJ
 crypto_data
 ```
 
-Regarding the missing stock data, we will use imputation. Since the stock data is all numeric, we will simply replace the missing values with the mean of the non-missing values. The result of this method will have two effects. One, it will retain the central tendancy of the attributes as the mean will not change. Two, the spread of the imputed attributes will have smaller spreads compared to the spread if we have chosen to ignore the missing values. 
+Regarding the missing stock data, we will use imputation. Since the stock data is all numeric, we will simply replace the missing values with the mean of the non-missing values. The result of this method will have two effects. One, it will retain the central tendancy of the attributes as the mean will not change. Two, the spread of the imputed attributes will have smaller spreads compared to the spread if we have chosen to ignore the missing values. A smaller spread may be hazardous as 
+cause over-confident inferences during analysis. It is important to recognize this when deciding how to handle missing data.
 
-
-Imputing missing values has two effects. First, the central tendency of data is retained, for example, if we impute missing data using the mean of a numeric variable, the mean after imputation will not change. This is a good reason to impute based on estimates of central tendency. However, the spread of the data will change. After imputation, the spread of the data will be smaller relative to spread if we ignore missing values. This could be problematic as underestimating the spread of data can yield over-confident inferences in downstream analysis. We will not address these issues directly in later chapters, but you should be aware of this.
+To replace the missing values with mean of the non-missing values, we will use the function 'mean' and we will set it so it will remove the missing data by setting na.rm = TRUE. We will do this for all stock variables. Additionally, we will check if a value is missing using the 'is.na' function, which will return TRUE if a value is missing and FALSE otherwise.
 
 ## Regressions
 
