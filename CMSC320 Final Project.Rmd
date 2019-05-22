@@ -8,6 +8,8 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Scraping and Tidying Data
+
 ```{r start}
 library(tidyverse)
 library(rvest)
@@ -27,11 +29,17 @@ cc
 library(readxl)
 
 CMSC320_Crypto_Data <- read_excel("CMSC320 Crypto Data.xlsx")
-df <- data.frame(CMSC320_Crypto_Data) 
+df <- data.frame(CMSC320_Crypto_Data) %>%
+   mutate(Date = as.Date(Date, format="%Y-%m-%d"))
 df
 
 ```
 
+```{r merge_data}
+temp <- cc %>%
+  left_join(df, by = "Date") 
+temp
+```
 
 ```{r DJW}
 # Gets stock data from yahoo
@@ -54,16 +62,11 @@ DJI_data
 DJI_data <- cbind(rownames(DJI_data), DJI_data)
 # Removes the row name
 rownames(DJI_data) <- NULL
-colnames(DJI_data) <- c("Date","DJW_Open","DJI_High", "DJI_Low", "DJI_Close", "DJI_Volume", "DJI_Adjusted")
+colnames(DJI_data) <- c("Date","DJI_Open","DJI_High", "DJI_Low", "DJI_Close", "DJI_Volume", "DJI_Adjusted")
 
 DJI_data 
 ```
 
-```{r merge_data}
-temp <- cc %>%
-  left_join(df, by = "Date") 
-temp
-```
 
 
 ```{r NVDA}
@@ -78,6 +81,7 @@ NVDA_data <- cbind(rownames(NVDA_data), NVDA_data)
 rownames(NVDA_data) <- NULL
 colnames(NVDA_data) <- c("Date","NVDA_Open","NVDA_High", "NVDA_Low", "NVDA_Close", "NVDA_Volume", "NVDA_Adjusted")
 
+NVDA_data
 ```
 
 
@@ -95,9 +99,79 @@ cryp <- temp %>%
 cryp
 ```
 
+## Missing Data: Imputation
+A common approach is to add an additional indicator variable stating if numeric missing value was imputed
+
+```{r indicate_missing}
+cryp_up <- cryp %>%
+  mutate(stock_missing = is.na(NVDA_Open))
+  
+cryp <- cryp_up
+cryp
+```
 
 
+In the case of numeric values, we can use a simple method for imputation where we replace missing values for a variable with, for instance, the mean of non-missing values
+
+```{r missing}
+cryp$NVDA_Open[is.na(cryp$NVDA_Open)] <- mean(cryp$NVDA_Open, na.rm=TRUE)
+cryp$NVDA_High[is.na(cryp$NVDA_High)] <- mean(cryp$NVDA_High, na.rm=TRUE)
+cryp$NVDA_Low[is.na(cryp$NVDA_Low)] <- mean(cryp$NVDA_Low, na.rm=TRUE)
+cryp$NVDA_Close[is.na(cryp$NVDA_Close)] <- mean(cryp$NVDA_Close, na.rm=TRUE)
+cryp$NVDA_Volume[is.na(cryp$NVDA_Volume)] <- mean(cryp$NVDA_Volume, na.rm=TRUE)
+cryp$NVDA_Adjusted[is.na(cryp$NVDA_Adjusted)] <- mean(cryp$NVDA_Adjusted, na.rm=TRUE)
+
+cryp$DJI_Open[is.na(cryp$DJI_Open)] <- mean(cryp$DJI_Open, na.rm=TRUE)
+cryp$DJI_High[is.na(cryp$DJI_High)] <- mean(cryp$DJI_High, na.rm=TRUE)
+cryp$DJI_Low[is.na(cryp$DJI_Low)] <- mean(cryp$DJI_Low, na.rm=TRUE)
+cryp$DJI_Close[is.na(cryp$DJI_Close)] <- mean(cryp$DJI_Close, na.rm=TRUE)
+cryp$DJI_Volume[is.na(cryp$DJI_Volume)] <- mean(cryp$DJI_Volume, na.rm=TRUE)
+cryp$DJI_Adjusted[is.na(cryp$DJI_Adjusted)] <- mean(cryp$DJI_Adjusted, na.rm=TRUE)
+
+cryp
+```
+
+Imputing missing values has two effects. First, the central tendency of data is retained, for example, if we impute missing data using the mean of a numeric variable, the mean after imputation will not change. This is a good reason to impute based on estimates of central tendency. However, the spread of the data will change. After imputation, the spread of the data will be smaller relative to spread if we ignore missing values. This could be problematic as underestimating the spread of data can yield over-confident inferences in downstream analysis. We will not address these issues directly in later chapters, but you should be aware of this.
+
+## Regressions
+
+```{r conventional_regression}
+price <- lm(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, data = cryp)
+
+summary(price)
+#broom::tidy(price)
+```
 
 
+```{r log_regression}
+log_price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = cryp)
 
+broom::tidy(log_price)
+```
+
+
+## Random Forest
+
+```{r forest}
+set.seed(1234)
+new_cryp <- na.omit(cryp)
+train_indices <- sample(nrow(new_cryp), nrow(new_cryp)/2)
+train_set <- new_cryp[train_indices,]
+test_set <- new_cryp[-train_indices,]
+
+library(randomForest)
+
+cryp_rf <- randomForest(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, importance=TRUE, mtry=3, data=train_set)
+
+plot(cryp_rf)
+```
+
+```{r interpret}
+variable_importance <- importance(cryp_rf)
+knitr::kable((round(variable_importance, digits=2)))
+```
+
+```{r plot}
+varImpPlot(cryp_rf)
+```
 
