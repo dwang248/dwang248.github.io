@@ -175,3 +175,90 @@ knitr::kable((round(variable_importance, digits=2)))
 varImpPlot(cryp_rf)
 ```
 
+## Leaflet Visualization
+```{r Local Volume Data}
+# need readxl library
+library(readxl)
+
+# read excel on local volume data in repository
+volume_data <- read_excel("localvolumedata.xlsx")
+
+# Our Data came out a bit wonky, so lets clean it up.
+volume_data_df <- volume_data %>%
+  as_data_frame()
+
+# Regexpression
+countryrexp <- "([A-Z]+[a-z]*)(\\s)*([A-Z]{1}[a-z]+)*.*"
+
+# Clean up Country Data Values
+# Change the name of some countries to make joining data easier
+localvolumedata <- volume_data_df %>%
+  mutate(Country = str_extract(Country,countryrexp))
+
+# Change the name of some countries to make joining data easier
+localvolumedata$Country[localvolumedata$Country == "USA"] <- "United States of America"
+localvolumedata$Country[localvolumedata$Country == "Hong Kong"] <- "Hong Kong S.A.R."
+localvolumedata$Country[localvolumedata$Country == "Tanzania"] <- "United Republic of Tanzania"
+
+```
+
+```{r Leaflet}
+library(rgeos)
+library(rworldmap)
+library(leaflet)
+library(rgdal)
+library(jsonlite)
+library(xts)
+
+# get world map
+# note must also install rworldextra
+
+wmap <- getMap(resolution= "high")
+
+# get centroids
+centroid <- gCentroid(wmap, byid=TRUE)
+
+# get a data.frame with centroids
+mapcen <- as.data.frame(centroid)
+
+mapcen <- cbind(rownames(mapcen), mapcen)
+
+rownames(mapcen) <- NULL
+colnames(mapcen) <- c("Country", "Lng", "Lat")
+
+maploc <- mapcen %>%
+  mutate(Country = as.character(Country))
+
+
+combined_map <- localvolumedata %>%
+  inner_join(maploc, by = "Country")
+
+combined_map <- combined_map %>%
+  mutate(pcolor = case_when(
+    Percentage < .001 ~ rgb(241/255,196/255,15/255),
+    Percentage < .01  ~ rgb(243/255,156/255,18/255),
+    Percentage < .1   ~ rgb(230/255,126/255,34/255),
+    Percentage < .2   ~ rgb(211/255,84/255,0/255),
+    Percentage >= .2   ~ rgb(135/255,54/255,0/255)
+    ))
+
+combined_map
+
+ico <- awesomeIcons(
+  icon = "bitcoin",
+  library = "glyphicon",
+  markerColor = "white",
+  iconColor = combined_map$pcolor
+)
+
+colorspal <- c(rgb(241/255,196/255,15/255),rgb(243/255,156/255,18/255),rgb(230/255,126/255,34/255),rgb(211/255,84/255,0/255),rgb(135/255,54/255,0/255))
+
+
+world_map <- leaflet(combined_map) %>%
+  addTiles() %>%
+  addAwesomeMarkers(~Lng,~Lat, icon = ~ico, popup = paste("<b>Country: </b> ", combined_map$Country, "<br>","<b>Continent: </b> ", combined_map$Continent, "<br>","<b>Native Currency: </b> ", combined_map$`Native Currency`, "<br>","<b>FX Rate: </b> ", combined_map$`FX Rate`, "<br>","<b>USD Value: </b> ", combined_map$`USD Value`, "<br>", "<b>Percentage: </b> ", combined_map$Percentage, "<br>"), clusterOptions = markerClusterOptions(), label = ~Country) %>%
+  addLegend(labels = ~c("<b>x < 0.1%</b>","<b>x < 1%</b>","<b>x < 10%</b>","<b>x < 20%</b>","<b>x >= 20%</b>"), colors = ~colorspal, opacity = 1, title= "Volume Percentage")
+  
+world_map
+```
+
