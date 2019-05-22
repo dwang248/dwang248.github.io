@@ -194,6 +194,8 @@ cause over-confident inferences during analysis. It is important to recognize th
 
 To replace the missing values with mean of the non-missing values, we will use the function 'mean' and we will set it so it will remove the missing data by setting na.rm = TRUE. We will do this for all stock variables. Additionally, we will check if a value is missing using the 'is.na' function, which will return TRUE if a value is missing and FALSE otherwise.
 
+We have now filled in the missing data for our stock variables. Now the next step is to analyze the data to determine what affects the price of Bitcoin.
+
 ## Regressions
 
 We will run a regression with the closing price of Bitcoin, close, as our dependent variable. 
