@@ -365,6 +365,10 @@ localvolumedata$Country[localvolumedata$Country == "Hong Kong"] <- "Hong Kong S.
 localvolumedata$Country[localvolumedata$Country == "Tanzania"] <- "United Republic of Tanzania"
 
 ```
+As a bonus, we will look at viewing certain types of geographical information with Leaflet in the context of Bitcoin. Specifically, we are observing Bitcoin Volume Data by Country. 
+
+Let's read excel data again. You should find "localvolumedata.xlsx" in the repository. 
+Our data may come out a bit wonky, so we'll also clean it up. Note that country isn't being formatted correctly. 
 
 ```{r Leaflet}
 library(rgeos)
@@ -407,6 +411,15 @@ combined_map <- combined_map %>%
     ))
 
 combined_map
+```
+Next, we need to get longitude and latitude data since it wasn't included in our table.
+There are also some additional libraries that you might need to install.
+
+Above lists out the code to get our longitude and latitude information for each country and combine it into a data-frame.
+Note that the conversion into the data-frame its columns to be labeled and of the right format. 
+
+Then we join our location data with our original excel table. 
+```{r Map}
 
 ico <- awesomeIcons(
   icon = "bitcoin",
@@ -425,4 +438,19 @@ world_map <- leaflet(combined_map) %>%
   
 world_map
 ```
+
+In order to set some visualization with leaflet, we must process our data by categorizing an attribute with color. 
+Since we're aiming to view Bitcoin Volume data of each country, we need to isolate an attribute that will be important in visualizing this data.
+
+That attribute is the "Percentage" column of our new combined map. To categorize them with color, look at the code. 
+
+We also need to set icon info (you'll see why in a bit) and create a matrix for our color values.
+
+Now, we can get to embedding the map. We first need our tiles which it basically the background for the map. Then add some markers on the map to represent the information. Finally, we must add a legend.
+
+Through this analysis on the price determinants of Bitcoin, hopefully this tutorial gave you insights on a few tools used by Data Scientists. We hope you learn to apply these skills on a project of your own and pursue growth in your respective field.
+
+
+
+
 
