@@ -67,12 +67,11 @@ We will now merge the two datasets together using their Date attribute. To do th
 
 We will merge the data set excel_data onto the data set crypto_hist using the common attribute "Date" with the function 'left_join'. This will create one data set that contains the data from both data sets. We will call this new data set, crypto_merge. 
 
+
 ```{r DJW}
 # Gets stock data from yahoo
 # install.packages("quantmod")
 
-library(tidyverse)
-library(rvest)
 library(quantmod)
 
 # Scrape Data from yahoo finance
@@ -81,11 +80,18 @@ getSymbols("^DJI", from = "2017-4-27", to = "2019-2-28")
 # Set it as a data frame
 DJI_data <- data.frame(DJI) 
 DJI_data
+```
 
+We will now injest stock market data. To do this we require the quantmod package. The quantmod package allows us to easily access stock data in R. For this project, we want stock information about the Dow Jones Industrial Average (^DJI). To get this information, we will use the function 'getSymbols' from the quantmod package. The 'getSymbols' function allows us to load and manage 'Symbols' in a specified enviroment. We will use it to obtain stock data for the Dow Jones Industrial Average. The function 'getSymbols' should create an xts object with the name of the stock company when loading the stock data of a specific company. In this case the xts object with the stock data should be named "DJI". Tranform the xts object into a data frame using data.frame. We will call this DJI_data.
+
+Further Reading for the quantmod package: https://cran.r-project.org/web/packages/quantmod/quantmod.pdf
+
+```{r rename_DJI}
 # Date is set as a row name. We need to change this so that Date becomes an attribute. This will be neccessary if we want to merge the stock data with the bitcoin data
 
 # Add a column name to the dates as well as change the names for the rest of the attributes
 DJI_data <- cbind(rownames(DJI_data), DJI_data)
+
 # Removes the row name
 rownames(DJI_data) <- NULL
 colnames(DJI_data) <- c("Date","DJI_Open","DJI_High", "DJI_Low", "DJI_Close", "DJI_Volume", "DJI_Adjusted")
@@ -93,35 +99,40 @@ colnames(DJI_data) <- c("Date","DJI_Open","DJI_High", "DJI_Low", "DJI_Close", "D
 DJI_data 
 ```
 
+
+When viewing the stock data for DJI, notice that the dates are row names instead of values. We need to tranform the dates for a row name to a value. This is so we can merge this data set into our crypto_merge data set. To do this we will first use the function 'cbind' to create a new attribute using the dates that are row names. We then will remove the row names by setting them to be NULL. Finally, we will rename the column names using the function 'colnames'. 
+
+Here are the attributes and an explanation of what each attribute is for this data set: 
 DJI_Open: The opening price of a stock of the Dow Jones Industrial Average
-
 DJI_Close: The closing price of a stock of the Dow Jones Industrial Average
-
 DJI_Volume: The number of Dow Jones Industrial Average shares that changed hands during a given day
-
 DJI_Adjusted: The adjusted closing price of a stock of the Dow Jones Industrial Average taking into account any corporate actions
 
+
 ```{r NVDA}
-# Repeat for NVIDIA stock
 getSymbols("NVDA", from = "2017-4-27", to = "2019-2-28")
 
 NVDA_data <- data.frame(NVDA) 
 NVDA_data
 
+```
+
+We will repeat the same process to ingest and scrape Nvidia stock data. We will use the 'getSymbols' function to get Nvidia stock data, and then we will transform it into a data frame. We will call this NVDA_data. 
+
+```{r rename_NVDA}
 NVDA_data <- cbind(rownames(NVDA_data), NVDA_data)
 
 rownames(NVDA_data) <- NULL
 colnames(NVDA_data) <- c("Date","NVDA_Open","NVDA_High", "NVDA_Low", "NVDA_Close", "NVDA_Volume", "NVDA_Adjusted")
-
 NVDA_data
 ```
 
+We will now fix the data so that dates are in an attribute. We will the same process as before. 
+
+Here are the attributes and an explanation of what each attribute is for this data set:
 NVDA_Open: The opening price of a stock of Nvidia
-
 NVDA_Close: The closing price of a stock of the Nvidia
-
 NVDA_Volume: The number of Nvidia shares that changed hands during a given day
-
 NVDA_Adjusted: The adjusted closing price of a stock of the Nvidia taking into account any corporate actions
 
 ```{r merge_stocks}
