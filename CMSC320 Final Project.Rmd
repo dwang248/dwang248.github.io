@@ -317,6 +317,7 @@ check %>%
          y = "residuals")
 ```
 
+We need to ensure that our regression is a good approximation. To determine this, we will create a plot that will show the relationship between fitted and residuals. 
 
 ## Random Forest
 
@@ -340,7 +341,7 @@ knitr::kable((round(variable_importance, digits=2)))
 ```
 
 ```{r plot}
-varImpPlot(cryp_rf)
+barplot(t(variable_importance/sum(variable_importance)))
 ```
 
 ## Leaflet Visualization
