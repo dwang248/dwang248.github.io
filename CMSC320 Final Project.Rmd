@@ -138,15 +138,19 @@ Imputing missing values has two effects. First, the central tendency of data is 
 ```{r conventional_regression}
 price <- lm(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, data = cryp)
 
-summary(price)
-#broom::tidy(price)
+broom::tidy(price)
 ```
 
 
-```{r log_regression}
-log_price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = cryp)
-
-broom::tidy(log_price)
+```{r fitted}
+check <- broom::augment(price) 
+check %>%
+  ggplot(aes(x=.fitted, y=.resid)) +
+    geom_point() +
+    geom_smooth() +
+    labs(title="Fitted vs. Residuals",
+         x = "fitted",
+         y = "residuals")
 ```
 
 
