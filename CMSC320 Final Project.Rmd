@@ -155,7 +155,6 @@ crypto_data
 We will now merge the data set crypto_data with the data set stock_data using the 'left_join' function using the common attribute "Date". This will merge all the data that we ingested into one data set. We will call this crypto_data.
 
 ## Missing Data: Imputation
-A common approach is to add an additional indicator variable stating if numeric missing value was imputed
 
 ```{r indicate_missing}
 cryp_up <- crypto_data %>%
@@ -165,6 +164,11 @@ crypto_data <- cryp_up
 crypto_data
 ```
 
+Looking at the data set, crypto_data, we can see that the stock attributes for NVDA and DJI have missing data. This is because the stock market is not operating during certain days. 
+
+In regards to missing data,it is important to know why the data was missing in order to determine how to approach missing data. There are two different apporaches regarding missing data. One could either remove the observations with missing data or one could impute the missing data. This usually depends on whether the data was missing at random or systematically. 
+
+But before that, let us first add an additional indicator variable stating if the stock data is missing or not. We will use the function 'is.na' to determine whether or not the stock is missing or not. We will also use the 'mutate' function to create the new indicator variable. Given that both NVDA and DJI will have missing values on the same day, we will only need one indicator variable to state if the value is missing or not. 
 
 In the case of numeric values, we can use a simple method for imputation where we replace missing values for a variable with, for instance, the mean of non-missing values
 
@@ -185,6 +189,9 @@ crypto_data$DJI_Adjusted[is.na(crypto_data$DJI_Adjusted)] <- mean(crypto_data$DJ
 
 crypto_data
 ```
+
+Regarding the missing stock data, we will use imputation. Since the stock data is all numeric, we will simply replace the missing values with the mean of the non-missing values. The result of this method will have two effects. One, it will retain the central tendancy of the attributes as the mean will not change. Two, the spread of the imputed attributes will have smaller spreads compared to the spread if we have chosen to ignore the missing values. 
+
 
 Imputing missing values has two effects. First, the central tendency of data is retained, for example, if we impute missing data using the mean of a numeric variable, the mean after imputation will not change. This is a good reason to impute based on estimates of central tendency. However, the spread of the data will change. After imputation, the spread of the data will be smaller relative to spread if we ignore missing values. This could be problematic as underestimating the spread of data can yield over-confident inferences in downstream analysis. We will not address these issues directly in later chapters, but you should be aware of this.
 
