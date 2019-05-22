@@ -189,8 +189,7 @@ crypto_data$DJI_Adjusted[is.na(crypto_data$DJI_Adjusted)] <- mean(crypto_data$DJ
 crypto_data
 ```
 
-Regarding the missing stock data, we will use imputation. Since the stock data is all numeric, we will simply replace the missing values with the mean of the non-missing values. The result of this method will have two effects. One, it will retain the central tendancy of the attributes as the mean will not change. Two, the spread of the imputed attributes will have smaller spreads compared to the spread if we have chosen to ignore the missing values. A smaller spread may be hazardous as 
-cause over-confident inferences during analysis. It is important to recognize this when deciding how to handle missing data.
+Regarding the missing stock data, we will use imputation. Since the stock data is all numeric, we will simply replace the missing values with the mean of the non-missing values. The result of this method will have two effects. One, it will retain the central tendancy of the attributes as the mean will not change. Two, the spread of the imputed attributes will have smaller spreads compared to the spread if we have chosen to ignore the missing values. A smaller spread may be hazardous as it causes over-confident inferences during analysis. It is important to recognize this when deciding how to handle missing data.
 
 To replace the missing values with mean of the non-missing values, we will use the function 'mean' and we will set it so it will remove the missing data by setting na.rm = TRUE. We will do this for all stock variables. Additionally, we will check if a value is missing using the 'is.na' function, which will return TRUE if a value is missing and FALSE otherwise.
 
@@ -219,25 +218,25 @@ Volume: Indicates the amount of money people are putting into the Bitcoin system
 
 Spread: Indicates how speculation could have an effect on the value of Bitcoin.
 
-TxPerDay: The more transactions individuals are making through Bitcoin, the more accepting people are with Bitcoin, which would increase its value.
+TxPerDay: The more transactions individuals are making through Bitcoin, the more accepting people are with Bitcoin, which would increase its value. This will be logged.
 
-AvgFee: A higher fee would indicate a higher demand for Bitcoin, which may increase its value.
+AvgFee: A higher fee would indicate a higher demand for Bitcoin, which may increase its value. This will be logged.
 
-Hashrate: A higher hashrate indicates that more people are involved in the Bitcoin system as well as it being more secure.
+Hashrate: A higher hashrate indicates that more people are involved in the Bitcoin system as well as it being more secure. This will be logged.
 
-Diff: The harder it is to mine a Bitcoin the less return on investment one would get to mine it possibly decreasing its value.
+Diff: The harder it is to mine a Bitcoin the less return on investment one would get to mine it possibly decreasing its value. This will be logged.
 
 ResElec/CommElec: Input costs to mine Bitcoin. A higher price in electricity may decrease the value of Bitcoin
 
 FFR: Higher interest rates means that miners can not borrow much money to pay for hardware to mine Bitcoin, which may decrease the value of Bitcoin.
 
-Trending: The popularity of Bitcoin may affect its price.
+Trending: The popularity of Bitcoin may affect its price. This will be logged.
 
 Infl: Chosen as a macroeconomic indicator of the impact of price changes on Bitcoin value
 
-DJI_Adjusted: Instrument for general health of the US economy 
+DJI_Adjusted: Instrument for general health of the US economy. This will be logged.
 
-NVDA_Adjusted: Chosen as an instrument for interest in Bitcoin mining
+NVDA_Adjusted: Chosen as an instrument for interest in Bitcoin mining. This will be logged.
 
 
 
@@ -246,6 +245,8 @@ price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + lo
 
 broom::tidy(price)
 ```
+
+We will now perform a logarithmic regression based on the dependent and indenpendet variables that we have chosen. We will use the function  
 
 On average, holding everything else constant, a one percent increase in volume will increase the price of Bitcoin by 0.392696910479%.
 
