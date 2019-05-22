@@ -8,7 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Scraping and Tidying Data
+## Ingesting and Tidying Data
 
 ```{r start}
 library(tidyverse)
@@ -25,6 +25,8 @@ colnames(cc)[colnames(cc)=="date"] <- "Date"
 cc
 ```
 
+
+
 ```{r excel_data}
 library(readxl)
 
@@ -34,6 +36,24 @@ df <- data.frame(CMSC320_Crypto_Data) %>%
 df
 
 ```
+
+Next, read the data from "CMSC320 Crypto Data.xlsx". This dataset is an excel spreadsheet. The data within the excel spreadsheet is data from various sources. 
+
+These are the attributes within the dataset and a short explanation of what they are:
+TxPerDay: Number of Transaction over a 24 hour period. 
+AvgFee: Daily aggregate fee added to transaction (transaction cost)
+Hashrate: Daily relative measure of network's processing power in trillions of terahashes per second
+Diff: Daily mathematical value of how hard it is to find a valid hash for a block
+ResElec: Daily residential Electricity Price in cents/kWh
+CommElec: Daily commercial Electricity Price in cents/kWh
+FFR: Federal Funds Rate or the interest rate at which banks lend reserve balances to other banks overnight
+Trending: Daily measure of interest in bitcoin over time (from Google trends)
+Infl: Inflation Rate; used as a macroeconomic indicator on the impact of price changes on Bitcoin value
+TT: A unique identifier for every observation
+
+To import an excel spreadsheet onto R, one must first have the package library readxl installed. The package readxl allows R to easily access the data within Excel. We will use the function 'read_excel' to read the xlsx file. Once we have the excel file in R, we will transform it so that it becomes a data frame. This is so we are able to manipulate the data within the excel sheet. We will use the function 'data.frame' to transform the xlsx file into a data frame.
+
+Notice that the type for the attribute Date is different than the one in the first dataset. It is essential for the Date attributes from the two datasets to be the same type in order for them to merge with each other. The 'mutate' function allows us to create new attributes based on the result of a given expression. We will use 'mutate' to transform Date into a type <date>. The expression we will use in the 'mutate' function will include the 'as.Date' function, which will convert character data to dates. The 'as.Date' function will allow use to convert 
 
 ```{r merge_data}
 temp <- cc %>%
@@ -67,7 +87,13 @@ colnames(DJI_data) <- c("Date","DJI_Open","DJI_High", "DJI_Low", "DJI_Close", "D
 DJI_data 
 ```
 
+DJI_Open: The opening price of a stock of the Dow Jones Industrial Average
 
+DJI_Close: The closing price of a stock of the Dow Jones Industrial Average
+
+DJI_Volume: The number of Dow Jones Industrial Average shares that changed hands during a given day
+
+DJI_Adjusted: The adjusted closing price of a stock of the Dow Jones Industrial Average taking into account any corporate actions
 
 ```{r NVDA}
 # Repeat for NVIDIA stock
@@ -84,6 +110,13 @@ colnames(NVDA_data) <- c("Date","NVDA_Open","NVDA_High", "NVDA_Low", "NVDA_Close
 NVDA_data
 ```
 
+NVDA_Open: The opening price of a stock of Nvidia
+
+NVDA_Close: The closing price of a stock of the Nvidia
+
+NVDA_Volume: The number of Nvidia shares that changed hands during a given day
+
+NVDA_Adjusted: The adjusted closing price of a stock of the Nvidia taking into account any corporate actions
 
 ```{r merge_stocks}
 stock_data <- NVDA_data %>%
@@ -135,12 +168,20 @@ Imputing missing values has two effects. First, the central tendency of data is 
 
 ## Regressions
 
-```{r conventional_regression}
-price <- lm(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, data = cryp)
+We will run a regression with the closing price of Bitcoin, close, as our dependent variable. 
+
+```{r regression}
+price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = cryp)
 
 broom::tidy(price)
 ```
 
+On average, holding everything else constant, a one percent increase in volume will increase the price of Bitcoin by 0.392696910479%.
+
+On average, 
+
+
+## Regression Analysis
 
 ```{r fitted}
 check <- broom::augment(price) 
