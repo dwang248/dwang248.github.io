@@ -63,7 +63,7 @@ cryto_merge <- crypto_hist %>%
 cryto_merge
 ```
 
-We will now merge the two datasets together using their Date attribute. To do this, we will be using the 'join' operation. The 'join' operation allows us to merge the rows of two data sets forming one data set, given a matching attribute from the two data sets. The join operation that we will be mainly using is the 'left_join' operation. 'left_join' will merge the two data sets together; however, all observations on the left hand side or the first data set are retained.     
+We will now merge the two datasets together using their Date attribute. To do this, we will be using the 'join' operation. The 'join' operation allows us to merge the rows of two data sets forming one data set, given a matching attribute from the two data sets. The join operation that we will be mainly using is the 'left_join' operation. 'left_join' will merge the two data sets together; however, all observations on the left hand side or the first data set are retained.   
 
 ```{r DJW}
 # Gets stock data from yahoo
