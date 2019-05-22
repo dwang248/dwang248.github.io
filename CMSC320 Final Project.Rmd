@@ -306,7 +306,7 @@ Looking at the regression, we can see that the variables log(volume), log(spread
 
 ## Random Forest
 
-There are several limitations in using linear methods for classification. 
+There are several limitations in using linear methods for classification. That is
 
 ```{r forest}
 set.seed(1234)
@@ -322,17 +322,20 @@ cryp_rf <- randomForest(close ~ volume + spread + TxPerDay + AvgFee + Hashrate +
 plot(cryp_rf)
 ```
 
+
+
 ```{r interpret}
 variable_importance <- importance(cryp_rf)
 knitr::kable((round(variable_importance, digits=2)))
 ```
 
-
+Using the function 'importance', we are able measure the variable importance from the random forest.
 
 ```{r plot}
 barplot(t(variable_importance/sum(variable_importance)))
 ```
 
+We can create a bar plot revealing how important a variable is in a random forest using the function 'barplot'. From the bar plot, we can see that the variable, ResElec, is the most important variable indicating that the price if residential electricity greatly influences the value of Bitcoin. The second most important variable is inflation, infl, which indicates that macroeconomic factors have a major effect on the value of Bitcoin. Finally, the third most important variable in volume. This means that the amount of money in the Bitcoin system is an important aspect in determining the price of Bitcoin.
 
 ## Leaflet Visualization
 ```{r Local Volume Data}
