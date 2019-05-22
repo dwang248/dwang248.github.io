@@ -196,9 +196,50 @@ To replace the missing values with mean of the non-missing values, we will use t
 
 We have now filled in the missing data for our stock variables. Now the next step is to analyze the data to determine what affects the price of Bitcoin.
 
-## Regressions
+## Regression
 
-We will run a regression with the closing price of Bitcoin, close, as our dependent variable. 
+```{r plot}
+crypto_data %>%
+  ggplot(aes(x=Date, y=close)) +
+    geom_point() +
+    geom_line() + 
+    labs(title="Bitcoin Value Over Time",
+         x = "Time",
+         y = "Value of Bitcoin")
+
+```
+
+In order to analyze what determines the price of Bitcoin, we will use a logarithmic regression. The reason we will be performing a logarithmic regression rather than a linear regression is due the exponential nature of the price of Bitcoin. This can be seen in the plot, which was created using the function 'ggplot' with the x-axis being Time and the y-axis being the Value of Bitcoin.
+
+We will run a regression with the closing price of Bitcoin, close, as our dependent variable. This will be used to represent the value of Bitcoin. This will be logged due to its exponential nature. To log a variable, use the 'log' function. We will also log several of the independent variables due to their exponential nature. 
+
+From the data set, crypto_data, we selected various variables as we believe that they may have an affect on the value of Bitcoin. Here is our intuition:
+
+Volume: Indicates the amount of money people are putting into the Bitcoin system. The larger the volume the more confident people are with the Bitcoin, which would increase its value.
+
+Spread: Indicates how speculation could have an effect on the value of Bitcoin.
+
+TxPerDay: The more transactions individuals are making through Bitcoin, the more accepting people are with Bitcoin, which would increase its value.
+
+AvgFee: A higher fee would indicate a higher demand for Bitcoin, which may increase its value.
+
+Hashrate: A higher hashrate indicates that more people are involved in the Bitcoin system as well as it being more secure.
+
+Diff: The harder it is to mine a Bitcoin the less return on investment one would get to mine it possibly decreasing its value.
+
+ResElec/CommElec: Input costs to mine Bitcoin. A higher price in electricity may decrease the value of Bitcoin
+
+FFR: Higher interest rates means that miners can not borrow much money to pay for hardware to mine Bitcoin, which may decrease the value of Bitcoin.
+
+Trending: The popularity of Bitcoin may affect its price.
+
+Infl: Chosen as a macroeconomic indicator of the impact of price changes on Bitcoin value
+
+DJI_Adjusted: Instrument for general health of the US economy 
+
+NVDA_Adjusted: Chosen as an instrument for interest in Bitcoin mining
+
+
 
 ```{r regression}
 price <- lm(log(close) ~ log(volume) + spread + log(TxPerDay) + log(AvgFee) + log(Hashrate) + log(Diff) + ResElec + CommElec + FFR + log(Trending) + Infl + log(NVDA_Adjusted) + log(DJI_Adjusted), data = crypto_data)
@@ -236,7 +277,7 @@ test_set <- new_cryp[-train_indices,]
 
 library(randomForest)
 
-cryp_rf <- randomForest(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, importance=TRUE, mtry=3, data=train_set)
+cryp_rf <- randomForest(close ~ volume + spread + TxPerDay + AvgFee + Hashrate + Diff + ResElec + CommElec + FFR + Trending + Infl + NVDA_Adjusted + DJI_Adjusted, importance=TRUE, mtry=10, data=train_set)
 
 plot(cryp_rf)
 ```
