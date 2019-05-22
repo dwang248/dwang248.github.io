@@ -306,7 +306,7 @@ Looking at the regression, we can see that the variables log(volume), log(spread
 
 ## Random Forest
 
-There are several limitations in using linear methods for classification. That is
+There are several limitations in using linear methods for classification. One is that it is limited in the partition of predictor space into regions. As a result, we will be using tree-based methods to better predict the determinants on the price of Bitcoin.
 
 ```{r forest}
 set.seed(1234)
@@ -322,14 +322,16 @@ cryp_rf <- randomForest(close ~ volume + spread + TxPerDay + AvgFee + Hashrate +
 plot(cryp_rf)
 ```
 
+We will be using a random forest to predict which variables are the most important in affecting the value of Bitcoin. To do this, we must first have the randomForest package. A random forest does this by averaging multiple decision trees and by randomly selecting features to split. 
 
+Looking at the plot, we can see that the more trees that the random forest has, the smaller the error, which is improving its prediction accuracy.
 
 ```{r interpret}
 variable_importance <- importance(cryp_rf)
 knitr::kable((round(variable_importance, digits=2)))
 ```
 
-Using the function 'importance', we are able measure the variable importance from the random forest.
+Though we do lose interpretability when using a random forest, we are still able measure the variable importance from the random forest using the function 'importance'.
 
 ```{r plot}
 barplot(t(variable_importance/sum(variable_importance)))
